@@ -61,8 +61,8 @@ do
     -server.port 28015 \  
     -rcon.ip 0.0.0.0 \  
     -rcon.port 28016 \  
-    -rcon.password "heregomyrconpasswordyall" \  
-    -server.maxplayers 420 \  
+    -rcon.password "placeyourrconpasswordhere" \  
+    -server.maxplayers 500 \  
     -server.hostname "Here is what I want my server to be in the list when people on rust look for it" \  
     -server.identity "myondiskarbitraryrustservername" \  
     -server.level "Procedural Map" \  
