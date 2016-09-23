@@ -140,4 +140,9 @@
 ### Press ctrl-a then press ctrl-d to detach from screen  
 ### Run screen -x to re-attach to it later  
   
-### Connect to rcon using RustAdmin on port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods. see also http://oxidemod.org/threads/server-commands-for-rust.6404/  
+### Connect to rcon using RustAdmin on port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods.
+
+
+## See Also
+
+http://oxidemod.org/threads/server-commands-for-rust.6404/  
