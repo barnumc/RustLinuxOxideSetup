@@ -21,10 +21,13 @@
   
 ### Let it run for the first time then quit.  
   
+  ```
   vim ./updaterust.ex  
+  ```
   
 #### Insert:  
   
+  ```
   #!/usr/bin/expect  
     
   set timeout -1  
@@ -37,22 +40,30 @@
   send \003  
   send "\r"  
   expect eof  
+  ```
   
 #### And save.  
   
+  ```
   chmod 700 updaterust.ex  
+  ```
   
 ### Install rust using the updater:  
   
+  ```
   ./updaterust.ex  
+  ```
   
 ### Set up the start script:  
   
+  ```
   cd ~/Steam/steamapps/common/rust_dedicated/  
   vim start.sh  
+  ```
   
 #### Insert:  
   
+  ```
   #!/bin/sh  
   clear  
   while :  
@@ -77,33 +88,54 @@
       -server.url "http://oxidemod.org"  
       echo "\nRestarting server...\n"  
   done  
+  ```
   
 #### And save.  
   
+  ```
   chmod 700 ./start.sh  
+  ```
   
 ### Install oxide, too (do this every time rust server has to update):  
   
+  ```
   curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > zip.zip  
   unzip zip.zip  
+  ```
   
 ### Run the server to populate oxide data  
+  
+  ```
   ./start.sh  
-### Wait a moment  
+  ```
+  
+### Wait a moment...
+### Then...
 ### Ctrl-C to stop the server  
   
 ### Set up symlinks to your server and oxide folders to save time:  
   
+  ```
   ln -s ~/Steam/steamapps/common/rust_dedicated/ ~/server  
+  ```
+  
 ### Update this path with your server identity name  
+  
+  ```
   ln -s ~/Steam/steamapps/common/rust_dedicated/server/myondiskarbitraryrustservername/oxide ~/oxide  
+  ```
   
 ### Get into a screen session so the server runs after you close your terminal, and start rust server:  
   
+  ```
   screen  
+  ```
 ### Opens up a terminal in a screen session, placing you into your home directory where you added the 'server' symlink  
+
+  ```
   cd server  
   ./start.sh  
+  ```
   
 ### Press ctrl-a then press ctrl-d to detach from screen  
 ### Run screen -x to re-attach to it later  
