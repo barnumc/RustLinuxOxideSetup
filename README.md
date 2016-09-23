@@ -8,6 +8,7 @@
   
 ### As the rust user:  
   
+  ```
   mkdir .ssh  
   chmod 700 .ssh  
   touch .ssh/authorized_keys  
@@ -16,6 +17,7 @@
   mkdir ~/steamcmd && cd ~/steamcmd  
   curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -  
   ./steamcmd.sh  
+  ```
   
 ### Let it run for the first time then quit.  
   
