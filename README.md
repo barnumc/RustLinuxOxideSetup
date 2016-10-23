@@ -44,21 +44,25 @@
 #### Insert:  
   
   ```
-  #!/usr/bin/expect
-  
-  set timeout -1
-  spawn ./steamcmd.sh
-  expect "Steam>"
-  send "login anonymous\r"
-  expect "Steam>"
-  send "app_update 258550\r"
-  expect "Steam>"
-  send \003
-  send "\r"
-  expect "$ "
-  send "cd ~/Steam/steamapps/common/rust_dedicated/; curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > oxide.zip; unzip oxide.zip\r"
-  ### Check if this needs updating with the unzip command overwriting
-  expect eof
+#!/usr/bin/expect
+
+set timeout -1
+spawn ./steamcmd.sh
+expect "Steam>"
+send "login anonymous\r"
+expect "Steam>"
+send "app_update 258550\r"
+expect "Steam>"
+send \003
+send "\r\r"
+spawn $env(SHELL)
+expect "$ "
+send "cd ~/Steam/steamapps/common/rust_dedicated/; curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > oxide.zip; unzip oxide.zip\r"
+expect "ename:"
+send "A\r"
+expect "$ "
+send "exit\r"
+expect eof
   ```
   
 #### And save. Set permissions:
