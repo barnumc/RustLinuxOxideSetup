@@ -1,7 +1,8 @@
 ### RustLinuxOxideSetup  
-###   
+
+# Plans: Update guide to use CentOS 7 or Ubuntu 12.04+ (LTS only) or Arch Linux
+
 ### Setup guide for Rust Server on Linux with the Oxide plugin  
-### Recommended for CentOS 6 or equivalent  
   
 ## As user 'root', install a few dependencies and set up a normal user account (we'll call it 'rust'):
   
