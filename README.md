@@ -1,19 +1,17 @@
-### RustLinuxOxideSetup  
+NOTE: You will need to open UDP for port 28015 as Rust uses UDP for game communication.
 
-# Plans: Update guide to use CentOS 7 or Ubuntu 12.04+ (LTS only) or Arch Linux
-
-### Setup guide for Rust Server on Linux with the Oxide plugin  
+Setup guide for Rust Server on Linux with the Oxide plugin  
   
-## As user 'root', install a few dependencies and set up a normal user account (we'll call it 'rust'):
+As user 'root', install a few dependencies and set up a normal user account (we'll call it 'rust'):
   
   ```
 yum install glibc.i686 libstdc++.i686 glibc libstdc++ expect screen  
 useradd rust  
   ```
   
-## NOTE: In order to use screen as user 'rust', ssh to rust@127.0.0.1 (localhost). You can set keys up to speed this up. If you try using 'su' or 'sudo' to change to the 'rust' user, the startup script will not function properly. Simply run 'ssh-keygen' as user 'root' to generate a fresh key, then copy the key into the 'rust' user at ~/.ssh/authorized_keys
+NOTE: In order to use screen as user 'rust', ssh to rust@127.0.0.1 (localhost). You can set keys up to speed this up. If you try using 'su' or 'sudo' to change to the 'rust' user, the startup script will not function properly. Simply run 'ssh-keygen' as user 'root' to generate a fresh key, then copy the key into the 'rust' user at ~/.ssh/authorized_keys
 
-## As user 'root':  
+As user 'root':  
 
   ```
 ssh-keygen
@@ -28,7 +26,7 @@ ssh rust@0
 ## It should connect and use the key - you should now be logged in as user 'rust'
   ```
   
-## As user 'rust':  
+As user 'rust':  
   
   ```
 mkdir ~/steamcmd && cd ~/steamcmd  
@@ -36,13 +34,13 @@ curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.g
 ./steamcmd.sh  
   ```
   
-### Let it run for the first time then type 'quit'. Begin editing a new file where we'll set up an auto updater:
+Let it run for the first time then type 'quit'. Begin editing a new file where we'll set up an auto updater:
   
   ```
 vim ./updaterust.ex  
   ```
   
-#### Insert:  
+Insert:  
   
   ```
 #!/usr/bin/expect
@@ -66,26 +64,26 @@ send "exit\r"
 expect eof
   ```
   
-#### And save. Set permissions:
+And save. Set permissions:
   
   ```
 chmod 700 updaterust.ex  
   ```
   
-### Install rust and oxide using the updater:  
+Install rust and oxide using the updater:  
   
   ```
 ./updaterust.ex  
   ```
   
-### Set up the start script:  
+Set up the start script:  
   
   ```
 cd ~/Steam/steamapps/common/rust_dedicated/  
 vim start.sh  
   ```
   
-#### Insert:  
+Insert:  
   
   ```
 #!/bin/sh
@@ -114,33 +112,33 @@ do
 done
   ```
   
-#### And save. Set permissions:
+And save. Set permissions:
   
   ```
 chmod 700 ./start.sh  
   ```
   
-### Run the server to populate oxide data directories:
+Run the server to populate oxide data directories:
   
   ```
 ./start.sh  
   ```
   
-## Wait a moment... then... Ctrl-C to stop the server  
+Wait a moment... then... Ctrl-C to stop the server  
   
-## Set up symlinks to your server and oxide folders to save time:  
+Set up symlinks to your server and oxide folders to save time:  
   
   ```
 ln -s ~/Steam/steamapps/common/rust_dedicated/ ~/server  
   ```
   
-## NOTE: Update the following path with your server identity name:
+NOTE: Update the following path with your server identity name:
   
   ```
 ln -s ~/Steam/steamapps/common/rust_dedicated/server/myrustservername/oxide ~/oxide  
   ```
   
-## Get into a screen session so the server runs after you close your terminal, and start rust server:  
+Get into a screen session so the server runs after you close your terminal, and start rust server:  
   
   ```
 screen  
@@ -148,15 +146,8 @@ cd server
 ./start.sh  
   ```
   
-## Press Ctrl-A then press Ctrl-D to detach from a screen session
-## Later, you can run 'screen -x' in bash to re-attach to the session.
-## Also check out 'screen --help' 'screen -wipe' and 'screen -list' in case you need to control multiple sessions
+Press Ctrl-A then press Ctrl-D to detach from a screen session.  Later, you can run 'screen -x' in bash to re-attach to the session.
 
-## You will need to open UDP for port 28015 as Rust uses UDP for game communication. You might also open up TCP/UDP for both 28015 and 28016. If you plan to run an nginx/haproxy server or host your map or a site on the same machine, open up 80/443.
+Connect to rcon using RustAdmin on TCP port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods.
 
-## Connect to rcon using RustAdmin on port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods.
-
-
-## See Also
-
-http://oxidemod.org/threads/server-commands-for-rust.6404/  
+Seealso: http://oxidemod.org/threads/server-commands-for-rust.6404/
