@@ -1,48 +1,47 @@
-NOTE: You will need to open UDP for port 28015 as Rust uses UDP for game communication.
+Open UDP port 28015 for Rust Dedicated Server
+Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
 
-Setup guide for Rust Server on Linux with the Oxide plugin  
-  
-As user 'root', install a few dependencies and set up a normal user account (we'll call it 'rust'):
-  
-  ```
-yum install glibc.i686 libstdc++.i686 glibc libstdc++ expect screen  
-useradd rust  
-  ```
-  
-NOTE: In order to use screen as user 'rust', ssh to rust@127.0.0.1 (localhost). You can set keys up to speed this up. If you try using 'su' or 'sudo' to change to the 'rust' user, the startup script will not function properly. Simply run 'ssh-keygen' as user 'root' to generate a fresh key, then copy the key into the 'rust' user at ~/.ssh/authorized_keys
+## Arch Linux
 
-As user 'root':  
+As user 'root', install a few dependencies and set up a normal user account:
+  
+```
+pacman -Scc
+pacman -Syuu
+pacman -S libstdc++ glibc libstdc++ expect screen  
+useradd -m -d /home/rust rust
+```
 
-  ```
+Add keys to the new account:
+
+```
+mkdir /home/rust/.ssh
 ssh-keygen
-## Press return a few times for default options
-mkdir ~rust/.ssh
-chown rust: ~rust/.ssh
-chmod 700 ~rust/.ssh
-cat ~/.ssh/id_rsa.pub > ~rust/.ssh/authorized_keys
-chown rust: ~rust/.ssh/authorized_keys
-chmod 600 ~rust/.ssh/authorized_keys
+## Press return several times to generate a key
+cat ~/.ssh/authorized_keys > /home/rust/.ssh/authorized_keys
+chmod 700 /home/rust/.ssh
+chmod 600 /home/rust/.ssh/authorized_keys
+chown -R rust:rust /home/rust/.ssh
 ssh rust@0
-## It should connect and use the key - you should now be logged in as user 'rust'
-  ```
+```
+
+As user 'rust', obtain a copy of steamcmd:
   
-As user 'rust':  
+```
+mkdir ~/steamcmd && cd ~/steamcmd
+curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -
+./steamcmd.sh
+```
+
+Let it run for the first time, then type 'quit'.  Create a new file and insert the expect script to implement auto-updates:
+
+```
+vim ./updaterust.ex
+```
   
-  ```
-mkdir ~/steamcmd && cd ~/steamcmd  
-curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -  
-./steamcmd.sh  
-  ```
+Insert:
   
-Let it run for the first time then type 'quit'. Begin editing a new file where we'll set up an auto updater:
-  
-  ```
-vim ./updaterust.ex  
-  ```
-  
-Insert:  
-  
-  ```
+```
 #!/usr/bin/expect
 
 set timeout -1
@@ -62,30 +61,30 @@ send "A\r"
 expect "$ "
 send "exit\r"
 expect eof
-  ```
+```
   
-And save. Set permissions:
+And save.  Set permissions:
   
-  ```
-chmod 700 updaterust.ex  
-  ```
+```
+chmod 700 updaterust.ex
+```
   
 Install rust and oxide using the updater:  
   
-  ```
-./updaterust.ex  
-  ```
+```
+./updaterust.ex
+```
   
-Set up the start script:  
+Set up the Rust Dedicated Server startup script:  
   
-  ```
-cd ~/Steam/steamapps/common/rust_dedicated/  
-vim start.sh  
-  ```
+```
+cd ~/Steam/steamapps/common/rust_dedicated/
+vim start.sh
+```
   
-Insert:  
+Insert:
   
-  ```
+```
 #!/bin/sh
 clear
 while :
@@ -110,41 +109,39 @@ do
     -server.url "http://oxidemod.org"
     echo "\nRestarting server...\n"
 done
-  ```
+```
   
 And save. Set permissions:
   
-  ```
-chmod 700 ./start.sh  
-  ```
+```
+chmod 700 ./start.sh
+```
   
 Run the server to populate oxide data directories:
   
-  ```
-./start.sh  
-  ```
+```
+./start.sh
+```
   
-Wait a moment... then... Ctrl-C to stop the server  
+Wait a moment, then press Ctrl-C to stop the server.  Set up symlinks to your server and oxide folders to save time:
   
-Set up symlinks to your server and oxide folders to save time:  
-  
-  ```
-ln -s ~/Steam/steamapps/common/rust_dedicated/ ~/server  
-  ```
-  
+```
+ln -s ~/Steam/steamapps/common/rust_dedicated ~/server  
+```
+
 NOTE: Update the following path with your server identity name:
-  
-  ```
+
+```
 ln -s ~/Steam/steamapps/common/rust_dedicated/server/myrustservername/oxide ~/oxide  
-  ```
-  
-Get into a screen session so the server runs after you close your terminal, and start rust server:  
-  
-  ```
-screen  
-cd server  
-./start.sh  
-  ```
+```
+
+Get into a screen session so the server runs after you close your terminal, and start Rust Dedicated Server:
+
+```
+screen
+cd ~/server
+./start.sh
+```
   
 Press Ctrl-A then press Ctrl-D to detach from a screen session.  Later, you can run 'screen -x' in bash to re-attach to the session.
 
