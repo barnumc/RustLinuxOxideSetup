@@ -35,6 +35,7 @@ chmod 700 /home/rust/.ssh
 chmod 600 /home/rust/.ssh/authorized_keys
 chown -R rust:rust /home/rust/.ssh
 ssh rust@0
+echo 'set mouse=""' >> ~/.vimrc
 ```
 
 As user 'rust', obtain a copy of steamcmd:
