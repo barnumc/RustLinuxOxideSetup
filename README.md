@@ -93,6 +93,8 @@ send "login anonymous\r"
 expect "Steam>"
 send "app_update 258550\r"
 expect "Steam>"
+send "app_update 258550 validate\r"
+expect "Steam>"
 send \003
 send "\r\r"
 spawn $env(SHELL)
