@@ -32,7 +32,7 @@ apt-get -q2 update
 ## Update the OS
 apt-gety dist-upgrade
 ## Install dependencies
-apt-get install curl wget unzip
+apt-get install curl unzip
 ```
 
 ## Setup
