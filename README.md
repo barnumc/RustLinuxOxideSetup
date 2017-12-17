@@ -9,7 +9,7 @@ As user 'root', install a few dependencies and set up a normal user account:
 ```
 pacman -Scc
 pacman -Syuu
-pacman -S libstdc++ glibc libstdc++ expect screen  
+pacman -S libstdc++5 glibc expect screen  
 useradd -m -d /home/rust rust
 ```
 
