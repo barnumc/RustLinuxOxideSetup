@@ -21,10 +21,12 @@ reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacma
 ## Update the OS
 pacman -Syyu
 ## Install dependencies
-pacman -S lib32-libstdc++5 lib32-glibc lib32-mesa expect screen unzip
+pacman -S curl expect screen unzip wget lib32-libstdc++5 lib32-glibc lib32-mesa
 ```
 
 ## Debian 9 prep
+
+Should also work on Ubuntu 16.04 LTS
 
 ```
 ## Update the package lists
@@ -32,7 +34,20 @@ apt-get -q2 update
 ## Update the OS
 apt-gety dist-upgrade
 ## Install dependencies
-apt-get install curl unzip lib32gcc1
+apt-get install curl expect screen unzip wget lib32gcc1
+```
+
+## Red Hat Enterprise Linux 7
+
+Should also work on RHEL variants
+
+```
+## Freshen the package manager
+yum clean all
+## Update the package lists
+yum -y makecache
+## Install dependencies
+yum install curl expect screen unzip wget glibc.i686 libstdc++.i686
 ```
 
 ## Setup
