@@ -37,8 +37,9 @@ apt-get install unzip
 
 ## Setup
 
+Create a 'rust' user and add keys:
+
 ```
-## Create a 'rust' user and add keys:
 useradd -m -d /home/rust rust
 mkdir /home/rust/.ssh
 ssh-keygen
