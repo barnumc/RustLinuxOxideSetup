@@ -130,28 +130,33 @@ Insert:
   
 ```
 #!/bin/sh
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD}/RustDedicated_Data/Plugins/x86_64
+unlink steamclient.so && ln -s ~/steamcmd/linux64/steamclient.so
 clear
 while :
 do
-    echo "Starting server...\n"
+    echo -e "\n\n\n$(date +%Y%m%dT%I%M%S%Z) [INFO]: Starting server...\n\n\n"
     exec ./RustDedicated -batchmode -nographics \
-    -server.ip 0.0.0.0 \
-    -server.port 28015 \
-    -rcon.ip 0.0.0.0 \
-    -rcon.port 28016 \
-    -rcon.password "hunter2" \
-    -server.maxplayers 500 \
-    -server.hostname "My Rust Server Name" \
-    -server.identity "myrustservername" \
-    -server.level "Procedural Map" \
-    -server.seed 12345 \ ### Look up rust level seed maps on google to see the map first
-    -server.worldsize 8000 \  ### Levelsize divided by 4 plus 500 = max distance the shore will be, ie 8000/4=2000+500=2500 so -2500 to 2500
-    -server.saveinterval 300 \  ### Time in seconds to flush all ingame building/item/inventory adjustments to disk (bash 'sync' command does not do this)
-    -server.globalchat true \
-    -server.description "Powered by Oxide" \
-    -server.headerimage "http://oxidemod.org/styles/oxide/logo.png" \
-    -server.url "http://oxidemod.org"
-    echo "\nRestarting server...\n"
+        -logfile ${PWD}/logs/$(date +%Y%m%dT%I%M%S%Z).log \
+        +nav_disable 1 \  ### Disables the new navigation API for animals to speed up server launches but animals will not move with this set to 1, set to 0 to allow animal movement
+        -server.ip 0.0.0.0 \
+        -server.port 28015 \
+        -rcon.ip 0.0.0.0 \
+        -rcon.port 28016 \
+        -rcon.password "hunter2" \
+        -server.maxplayers 500 \
+        -server.hostname "Rustaculous" \
+        -server.identity "ondisknameofrustserver" \
+        -server.level "Procedural Map" \
+        -server.seed 12345 \ ### Look up rust level seed maps on google to see the map first
+        -server.worldsize 8000 \  ### Levelsize divided by 4 plus 500 = max distance the shore will be, ie 8000/4=2000+500=2500 so -2500 to 2500
+        -server.saveinterval 300 \  ### Time in seconds to flush all ingame building/item/inventory adjustments to disk (bash 'sync' command does not do this)
+        -server.globalchat true \
+        -server.description "Powered by Oxide" \
+        -server.headerimage "http://oxidemod.org/styles/oxide/logo.png" \
+        -server.url "http://oxidemod.org"
+    echo -e "\n\n\n$(date +%Y%m%dT%I%M%S%Z) [ERROR]: Restarting server...\n\n\n"
+
 done
 ```
   
