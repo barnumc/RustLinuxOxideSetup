@@ -1,4 +1,5 @@
 Open UDP port 28015 for Rust Dedicated Server
+
 Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
 
 ## Arch Linux
