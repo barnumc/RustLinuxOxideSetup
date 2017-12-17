@@ -19,7 +19,7 @@ reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacma
 ## Update the OS
 pacman -Syyu
 ## Install dependencies
-pacman -S lib32-libstdc++5 libstdc++5 lib32-glibc expect screen
+pacman -S lib32-libstdc++5 libstdc++5 lib32-glibc expect screen unzip
 ## Create a 'rust' user
 useradd -m -d /home/rust rust
 ```
