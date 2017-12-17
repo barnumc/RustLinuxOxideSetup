@@ -21,7 +21,7 @@ reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacma
 ## Update the OS
 pacman -Syyu
 ## Install dependencies
-pacman -S curl expect screen unzip wget lib32-libstdc++5 lib32-glibc lib32-mesa
+pacman -S curl expect screen strings unzip wget lib32-libstdc++5 lib32-glibc lib32-mesa
 ```
 
 ## Debian 9 prep
@@ -34,7 +34,7 @@ apt-get -q2 update
 ## Update the OS
 apt-gety dist-upgrade
 ## Install dependencies
-apt-get install curl expect screen unzip wget lib32gcc1
+apt-get install curl expect screen strings unzip wget lib32gcc1
 ```
 
 ## Red Hat Enterprise Linux 7
@@ -47,7 +47,7 @@ yum clean all
 ## Update the package lists
 yum -y makecache
 ## Install dependencies
-yum install curl expect screen unzip wget glibc.i686 libstdc++.i686
+yum install curl expect screen strings unzip wget glibc.i686 libstdc++.i686
 ```
 
 ## Setup
