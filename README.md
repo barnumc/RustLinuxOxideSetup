@@ -19,7 +19,7 @@ Add keys to the new account:
 mkdir /home/rust/.ssh
 ssh-keygen
 ## Press return several times to generate a key
-cat ~/.ssh/authorized_keys > /home/rust/.ssh/authorized_keys
+cat ~/.ssh/id_rsa.pub > /home/rust/.ssh/authorized_keys
 chmod 700 /home/rust/.ssh
 chmod 600 /home/rust/.ssh/authorized_keys
 chown -R rust:rust /home/rust/.ssh
