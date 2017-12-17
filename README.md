@@ -67,7 +67,7 @@ send \003
 send "\r\r"
 spawn $env(SHELL)
 expect "$ "
-send "cd ~/Steam/steamapps/common/rust_dedicated/; wget "https://github.com/OxideMod/Oxide.Rust/releases/download/$(curl -sqI https://github.com/OxideMod/Oxide.Rust/releases/latest | awk -F\/ '/^Location/ {print $8}' | strings)/Oxide.Rust.zip" -O oxide.zip; unzip oxide.zip\r"
+send "cd ~/Steam/steamapps/common/rust_dedicated/; wget https://github.com/OxideMod/Oxide.Rust/releases/download/\$(curl -sqI https://github.com/OxideMod/Oxide.Rust/releases/latest | awk -F\/ '/^Location/ {print \$8}' | strings)/Oxide.Rust.zip -O oxide.zip; unzip oxide.zip\r"
 expect "ename:"
 send "A\r"
 expect "$ "
