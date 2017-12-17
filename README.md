@@ -4,6 +4,8 @@ Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
 
 ## Arch Linux
 
+Known issue:  libRenderer.so won't load properly; disable animal AI with +nav_disable 1 to fix (animals will be stationary)
+
 As user 'root', install a few dependencies and set up a normal user account:
   
 ```
@@ -19,7 +21,7 @@ reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacma
 ## Update the OS
 pacman -Syyu
 ## Install dependencies
-pacman -S lib32-libstdc++5 libstdc++5 lib32-glibc expect screen unzip
+pacman -S lib32-libstdc++5 lib32-glibc lib32-mesa expect screen unzip
 ## Create a 'rust' user
 useradd -m -d /home/rust rust
 ```
