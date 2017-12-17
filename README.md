@@ -7,9 +7,20 @@ Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
 As user 'root', install a few dependencies and set up a normal user account:
   
 ```
+vim /etc/pacman.conf
+## Uncomment the 'multilib' repo and save
 pacman -Scc
-pacman -Syuu
-pacman -S libstdc++5 glibc expect screen  
+## Enter 'y' twice for yes
+pacman -Syy
+## Install reflector
+pacman -S reflector
+## Get faster repo sources
+reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacman.d/mirrorlist
+## Update the OS
+pacman -Syyu
+## Install dependencies
+pacman -S lib32-libstdc++5 libstdc++5 lib32-glibc expect screen
+## Create a 'rust' user
 useradd -m -d /home/rust rust
 ```
 
@@ -27,7 +38,7 @@ ssh rust@0
 ```
 
 As user 'rust', obtain a copy of steamcmd:
-  
+
 ```
 mkdir ~/steamcmd && cd ~/steamcmd
 curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -
