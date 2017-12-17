@@ -2,7 +2,7 @@ Open UDP port 28015 for Rust Dedicated Server
 
 Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
 
-## Arch Linux
+## Arch Linux prep
 
 Known issue:  libRenderer.so won't load properly; disable animal AI with +nav_disable 1 to fix (animals will be stationary)
 
@@ -22,13 +22,24 @@ reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacma
 pacman -Syyu
 ## Install dependencies
 pacman -S lib32-libstdc++5 lib32-glibc lib32-mesa expect screen unzip
-## Create a 'rust' user
+```
+
+## Debian 9 prep
+
+```
+## Update the package lists
+apt-get -q2 update
+## Update the OS
+apt-gety dist-upgrade
+## Install dependencies
+apt-get install unzip
+```
+
+## Setup
+
+```
+Create a 'rust' user and add keys:
 useradd -m -d /home/rust rust
-```
-
-Add keys to the new account:
-
-```
 mkdir /home/rust/.ssh
 ssh-keygen
 ## Press return several times to generate a key
