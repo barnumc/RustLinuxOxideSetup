@@ -32,7 +32,7 @@ Should also work on Ubuntu 16.04 LTS
 ## Update the package lists
 apt-get -q2 update
 ## Update the OS
-apt-gety dist-upgrade
+apt-get -y dist-upgrade
 ## Install dependencies
 apt-get install binutils curl expect screen unzip wget lib32gcc1
 ```
@@ -196,4 +196,4 @@ Press Ctrl-A then press Ctrl-D to detach from a screen session.  Later, you can 
 
 Connect to rcon using RustAdmin on TCP port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods.
 
-Seealso: http://oxidemod.org/threads/server-commands-for-rust.6404/
+See also: http://oxidemod.org/threads/server-commands-for-rust.6404/
