@@ -1,109 +1,199 @@
-# RustLinuxOxideSetup  
-Setup guide for Rust Server on Linux with the Oxide plugin  
+Open UDP port 28015 for Rust Dedicated Server
+
+Open TCP port 28016 for the remote console (rcon) (for use with RustAdmin)
+
+## Arch Linux prep
+
+Known issue:  libRenderer.so won't load properly; disable animal AI with +nav_disable 1 to fix (animals will be stationary)
+
+As user 'root', install a few dependencies and set up a normal user account:
   
-sudo yum install glibc.i686 libstdc++.i686 glibc libstdc++ expect screen  
-useradd rust  
+```
+vim /etc/pacman.conf
+## Uncomment the 'multilib' repo and save
+pacman -Scc
+## Enter 'y' twice for yes
+pacman -Syy
+## Install reflector
+pacman -S reflector
+## Get faster repo sources
+reflector --protocol https --latest 30 --number 20 --sort rate --save /etc/pacman.d/mirrorlist
+## Update the OS
+pacman -Syyu
+## Install dependencies
+pacman -S curl expect screen unzip wget lib32-libstdc++5 lib32-glibc lib32-mesa
+```
+
+## Debian 9 prep
+
+Should also work on Ubuntu 16.04 LTS
+
+```
+## Update the package lists
+apt-get -q2 update
+## Update the OS
+apt-get -y dist-upgrade
+## Install dependencies
+apt-get install binutils curl expect screen unzip wget lib32gcc1
+```
+
+## Red Hat Enterprise Linux 7
+
+Should also work on RHEL variants
+
+```
+## Freshen the package manager
+yum clean all
+## Update the package lists
+yum -y makecache
+## Install dependencies
+yum install curl expect screen unzip wget glibc.i686 libstdc++.i686
+```
+
+## Setup
+
+Create a 'rust' user and add keys:
+
+```
+useradd -m -d /home/rust rust
+mkdir /home/rust/.ssh
+ssh-keygen
+## Press return several times to generate a key
+cat ~/.ssh/id_rsa.pub > /home/rust/.ssh/authorized_keys
+chmod 700 /home/rust/.ssh
+chmod 600 /home/rust/.ssh/authorized_keys
+chown -R rust:rust /home/rust/.ssh
+ssh rust@0
+echo 'set mouse=""' >> ~/.vimrc
+```
+
+As user 'rust', obtain a copy of steamcmd:
+
+```
+mkdir ~/steamcmd && cd ~/steamcmd
+curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -
+./steamcmd.sh
+```
+
+Let it run for the first time, then type 'quit'.  Create a new file and insert the expect script to implement auto-updates:
+
+```
+vim ./updaterust.ex
+```
   
-### NOTE: In order to use screen as user rust, you must ssh into the user. it wont work right if you 'su' to your rust user. just run ssh-keygen as another user (like root) and then copy the key into the rust user then just ssh rust@0 or ssh rust@127.0.0.1  
+Insert:
   
-### As the rust user:  
+```
+#!/usr/bin/expect
+
+set timeout -1
+spawn ./steamcmd.sh
+expect "Steam>"
+send "login anonymous\r"
+expect "Steam>"
+send "app_update 258550\r"
+expect "Steam>"
+send "app_update 258550 validate\r"
+expect "Steam>"
+send \003
+send "\r\r"
+spawn $env(SHELL)
+expect "$ "
+send "cd ~/Steam/steamapps/common/rust_dedicated/; wget https://github.com/OxideMod/Oxide.Rust/releases/download/\$(curl -sqI https://github.com/OxideMod/Oxide.Rust/releases/latest | awk -F\/ '/^Location/ {print \$8}' | strings)/Oxide.Rust.zip -O oxide.zip; unzip oxide.zip\r"
+expect "ename:"
+send "A\r"
+expect "$ "
+send "exit\r"
+expect eof
+```
   
-mkdir .ssh  
-chmod 700 .ssh  
-touch .ssh/authorized_keys  
-chmod 600 .ssh/authorized_keys  
-yum install glibc libstdc++  
-mkdir ~/steamcmd && cd ~/steamcmd  
-curl -sqL 'https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz' | tar zxvf -  
-./steamcmd.sh  
+And save.  Set permissions:
   
-### Let it run for the first time then quit.  
+```
+chmod 700 updaterust.ex
+```
   
-vim ./updaterust.ex  
+Install rust and oxide using the updater:  
   
-### Insert:  
+```
+./updaterust.ex
+```
   
-#!/usr/bin/expect  
+Set up the Rust Dedicated Server startup script:  
   
-set timeout -1  
-spawn ./steamcmd.sh  
-expect "Steam>"  
-send "login anonymous\r"  
-expect "Steam>"  
-send "app_update 258550\r"  
-expect "Steam>"  
-send \003  
-send "\r"  
-expect eof  
+```
+cd ~/Steam/steamapps/common/rust_dedicated/
+vim start.sh
+```
   
-### And save.  
+Insert:
   
-chmod 700 updaterust.ex  
+```
+#!/bin/sh
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${PWD}/RustDedicated_Data/Plugins/x86_64
+unlink steamclient.so && ln -s ~/steamcmd/linux64/steamclient.so
+clear
+while :
+do
+    echo -e "\n\n\n$(date +%Y%m%dT%I%M%S%Z) [INFO]: Starting server...\n\n\n"
+    exec ./RustDedicated -batchmode -nographics \
+        -logfile ${PWD}/logs/$(date +%Y%m%dT%I%M%S%Z).log \
+        +nav_disable 1 \  ### Disables the new navigation API for animals to speed up server launches but animals will not move with this set to 1, set to 0 to allow animal movement
+        -server.ip 0.0.0.0 \
+        -server.port 28015 \
+        -rcon.ip 0.0.0.0 \
+        -rcon.port 28016 \
+        -rcon.password "hunter2" \
+        -server.maxplayers 500 \
+        -server.hostname "Rustaculous" \
+        -server.identity "ondisknameofrustserver" \
+        -server.level "Procedural Map" \
+        -server.seed 12345 \ ### Look up rust level seed maps on google to see the map first
+        -server.worldsize 8000 \  ### Levelsize divided by 4 plus 500 = max distance the shore will be, ie 8000/4=2000+500=2500 so -2500 to 2500
+        -server.saveinterval 300 \  ### Time in seconds to flush all ingame building/item/inventory adjustments to disk (bash 'sync' command does not do this)
+        -server.globalchat true \
+        -server.description "Powered by Oxide" \
+        -server.headerimage "http://oxidemod.org/styles/oxide/logo.png" \
+        -server.url "http://oxidemod.org"
+    echo -e "\n\n\n$(date +%Y%m%dT%I%M%S%Z) [ERROR]: Restarting server...\n\n\n"
+
+done
+```
   
-### Install rust using the updater:  
+And save. Set permissions:
   
-./updaterust.ex  
+```
+chmod 700 ./start.sh
+```
   
-### Set up the start script:  
+Run the server to populate oxide data directories:
   
-cd ~/Steam/steamapps/common/rust_dedicated/  
-vim start.sh  
+```
+./start.sh
+```
   
-### Insert:  
+Wait a moment, then press Ctrl-C to stop the server.  Set up symlinks to your server and oxide folders to save time:
   
-#!/bin/sh  
-clear  
-while :  
-do  
-    echo "Starting server...\n"  
-    exec ./RustDedicated -batchmode -nographics \  
-    -server.ip 0.0.0.0 \  
-    -server.port 28015 \  
-    -rcon.ip 0.0.0.0 \  
-    -rcon.port 28016 \  
-    -rcon.password "placeyourrconpasswordhere" \  
-    -server.maxplayers 500 \  
-    -server.hostname "Here is what I want my server to be in the list when people on rust look for it" \  
-    -server.identity "myondiskarbitraryrustservername" \  
-    -server.level "Procedural Map" \  
-    -server.seed 12345 \ ### Look up rust level seed maps on google to see the map first  
-    -server.worldsize 8000 \  ### Levelsize divided by 4 plus 500 = max distance the shore will be, ie 8000/4=2000+500=2500 so -2500 to 2500  
-    -server.saveinterval 15 \  ### Time in seconds to flush all ingame building/item/inventory adjustments to disk. WARNING a sync in bash does NOT do this, set it low, 1 is not bad for only 2-5 players all building.  
-    -server.globalchat true \  
-    -server.description "Powered by Oxide" \  
-    -server.headerimage "http://oxidemod.org/styles/oxide/logo.png" \  
-    -server.url "http://oxidemod.org"  
-    echo "\nRestarting server...\n"  
-done  
+```
+ln -s ~/Steam/steamapps/common/rust_dedicated ~/server  
+```
+
+NOTE: Update the following path with your server identity name:
+
+```
+ln -s ~/Steam/steamapps/common/rust_dedicated/server/myrustservername/oxide ~/oxide  
+```
+
+Get into a screen session so the server runs after you close your terminal, and start Rust Dedicated Server:
+
+```
+screen
+cd ~/server
+./start.sh
+```
   
-### And save.  
-  
-chmod 700 ./start.sh  
-  
-### Install oxide, too (do this every time rust server has to update):  
-  
-curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > zip.zip  
-unzip zip.zip  
-  
-### Run the server to populate oxide data  
-./start.sh  
-### Wait a moment  
-### Ctrl-C to stop the server  
-  
-### Set up symlinks to your server and oxide folders to save time:  
-  
-ln -s ~/Steam/steamapps/common/rust_dedicated/ ~/server  
-### Update this path with your server identity name  
-ln -s ~/Steam/steamapps/common/rust_dedicated/server/myondiskarbitraryrustservername/oxide ~/oxide  
-  
-### Get into a screen session so the server runs after you close your terminal, and start rust server:  
-  
-screen  
-### Opens up a terminal in a screen session, placing you into your home directory where you added the 'server' symlink  
-cd server  
-./start.sh  
-  
-### Press ctrl-a then press ctrl-d to detach from screen  
-### Run screen -x to re-attach to it later  
-  
-### Connect to rcon using RustAdmin on port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods. see also http://oxidemod.org/threads/server-commands-for-rust.6404/  
+Press Ctrl-A then press Ctrl-D to detach from a screen session.  Later, you can run 'screen -x' in bash to re-attach to the session.
+
+Connect to rcon using RustAdmin on TCP port 28016 using the rcon pw and run 'server.writecfg' to populate the 'cfg' folder with config files to let you add admins/mods.
+
+See also: http://oxidemod.org/threads/server-commands-for-rust.6404/
