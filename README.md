@@ -1,4 +1,9 @@
 # RustLinuxOxideSetup  
+
+Run setup.sh 
+
+# OLD 
+
 Setup guide for Rust Server on Linux with the Oxide plugin  
   
 sudo yum install glibc.i686 libstdc++.i686 glibc libstdc++ expect screen  
@@ -82,8 +87,8 @@ chmod 700 ./start.sh
   
 ### Install oxide, too (do this every time rust server has to update):  
   
-curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > zip.zip  
-unzip zip.zip  
+curl -sqL 'https://github.com/OxideMod/Snapshots/raw/master/Oxide-Rust_Linux.zip' > oxide.zip  
+unzip oxide.zip  
   
 ### Run the server to populate oxide data  
 ./start.sh  
